@@ -3,120 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lucky 90 Tambola - Admin Dashboard</title>
-
-<style>
-body{
-font-family:Arial,sans-serif;
-background:#0f172a;
-color:white;
-margin:0;
-padding:20px;
-}
-.container{
-max-width:600px;
-margin:auto;
-background:#1e293b;
-padding:20px;
-border-radius:12px;
-}
-h1{
-text-align:center;
-color:#22c55e;
-}
-label{
-display:block;
-margin-top:15px;
-}
-input,select{
-width:100%;
-padding:10px;
-margin-top:5px;
-border-radius:8px;
-border:none;
-box-sizing:border-box;
-}
-button{
-margin-top:20px;
-width:100%;
-padding:12px;
-background:#16a34a;
-color:white;
-border:none;
-border-radius:8px;
-font-size:16px;
-cursor:pointer;
-}
-#result{
-margin-top:20px;
-background:#334155;
-padding:15px;
-border-radius:8px;
-}
-</style>
-
+<title>Lucky 90 Tambola - Admin</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div class="container">
 
-<h1>Lucky 90 Tambola</h1>
+<h1>Lucky 90 Tambola - Admin</h1>
 
-<label>Game Name</label>
-<input id="gameName" placeholder="Evening Tambola">
+<input type="text" id="gameName" placeholder="Game Name">
 
-<label>Ticket Price (₹)</label>
-<input id="price" type="number">
+<input type="number" id="price" placeholder="Ticket Price">
 
-<label>Number of Tickets</label>
-<select id="tickets">
-<option>10</option>
-<option>20</option>
-<option>30</option>
-<option>40</option>
-<option selected>50</option>
-</select>
+<input type="number" id="tickets" placeholder="Total Tickets">
 
-<label>Date</label>
-<input id="date" type="date">
+<input type="date" id="date">
 
-<label>Time</label>
-<input id="time" type="time">
+<input type="time" id="time">
 
-<label>WhatsApp Number</label>
-<input id="whatsapp" placeholder="919876543210">
+<input type="text" id="whatsapp" placeholder="WhatsApp Number">
 
 <button onclick="saveGame()">Save Game</button>
 
-<div id="result">
-No game created yet.
-</div>
+<p id="status"></p>
 
 </div>
 
-<script>
-function saveGame(){
+<script type="module">
+  import { db } from "./firebase.js";
 
-let game={
-name:document.getElementById("gameName").value,
-price:document.getElementById("price").value,
-tickets:document.getElementById("tickets").value,
-date:document.getElementById("date").value,
-time:document.getElementById("time").value,
-whatsapp:document.getElementById("whatsapp").value
+import {
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+window.saveGame = async function () {
+
+  const game = {
+    name: document.getElementById("gameName").value,
+    price: document.getElementById("price").value,
+    tickets: document.getElementById("tickets").value,
+    date: document.getElementById("date").value,
+    time: document.getElementById("time").value,
+    whatsapp: document.getElementById("whatsapp").value,
+    createdAt: serverTimestamp()
+  };
+
+  try {
+    await addDoc(collection(db, "games"), game);
+
+    document.getElementById("status").innerHTML =
+      "✅ Game saved successfully!";
+
+  } catch (error) {
+
+    document.getElementById("status").innerHTML =
+      "❌ Error: " + error.message;
+
+  }
+
 };
-
-localStorage.setItem("tambolaGame",JSON.stringify(game));
-
-document.getElementById("result").innerHTML=
-"<h3>Game Saved ✅</h3>"+
-"<b>"+game.name+"</b><br>"+
-"₹"+game.price+"<br>"+
-game.tickets+" Tickets<br>"+
-game.date+" "+game.time+"<br>"+
-game.whatsapp;
-}
 </script>
 
 </body>
 </html>
+  
